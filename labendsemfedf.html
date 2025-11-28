@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Marks Table with Sorting & Filtering</title>
+    <style>
+        table {
+            width: 60%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            cursor: pointer;
+            background-color: lightgray;
+        }
+        input {
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Student Marks Table</h2>
+
+<!-- Filter Section -->
+<label>Filter by Subject:</label>
+<select id="subjectFilter" onchange="filterTable()">
+    <option value="All">All</option>
+    <option value="Maths">Maths</option>
+    <option value="Science">Science</option>
+    <option value="English">English</option>
+</select>
+
+<input type="number" id="minMarks" placeholder="Min Marks" onkeyup="filterTable()">
+<input type="number" id="maxMarks" placeholder="Max Marks" onkeyup="filterTable()">
+
+<!-- Table -->
+<table id="marksTable">
+    <thead>
+        <tr>
+            <th onclick="sortTable(0)">Name</th>
+            <th onclick="sortTable(1)">Subject</th>
+            <th onclick="sortTable(2)">Marks</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr><td>Rahul</td><td>Maths</td><td>85</td></tr>
+        <tr><td>Priya</td><td>Science</td><td>92</td></tr>
+        <tr><td>Arjun</td><td>English</td><td>76</td></tr>
+        <tr><td>Meera</td><td>Maths</td><td>66</td></tr>
+        <tr><td>Ravi</td><td>Science</td><td>54</td></tr>
+    </tbody>
+</table>
+
+<script>
+// Sorting function
+function sortTable(col) {
+    let table = document.getElementById("marksTable");
+    let rows = Array.from(table.rows).slice(1);
+    let sorted = rows.sort((a, b) => {
+        let val1 = a.cells[col].innerText;
+        let val2 = b.cells[col].innerText;
+
+        return col === 2 ? val1 - val2 : val1.localeCompare(val2);
+    });
+
+    sorted.forEach(r => table.tBodies[0].appendChild(r));
+}
+
+// Filtering Function
+function filterTable() {
+    let subject = document.getElementById("subjectFilter").value;
+    let min = document.getElementById("minMarks").value;
+    let max = document.getElementById("maxMarks").value;
+    let rows = document.querySelectorAll("#marksTable tbody tr");
+
+    rows.forEach(row => {
+        let sub = row.cells[1].innerText;
+        let marks = parseInt(row.cells[2].innerText);
+
+        let subjectMatch = (subject === "All" || sub === subject);
+        let minMatch = (!min || marks >= min);
+        let maxMatch = (!max || marks <= max);
+
+        row.style.display = (subjectMatch && minMatch && maxMatch) ? "" : "none";
+    });
+}
+</script>
+
+</body>
+</html>
